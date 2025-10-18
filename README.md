@@ -1,46 +1,36 @@
-<a href="https://invoicegenerator.tax">
-<p align="center"><img alt="Free invoice generator! Enter your details and download your invoice as pdf. No sign-up required!" width="100" height="100" src="./public/logo.svg"></p>
-  <h1 align="center"><a href="https://invoicegenerator.tax">Invoice Generator</a></h1>
-</a>
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-<p align="center">
-  Free invoice generator! Enter your details and download your invoice as pdf. No sign-up required!
-</p>
+## Getting Started
 
-<p align="center">
-  <a href="https://github.com/gokulkrishh/invoicegenerator.tax/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/gokulkrishh/invoicegenerator.tax?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
-  </a>
-</p>
+First, run the development server:
 
-<p align="center">
-  <a href="#introduction"><strong>Introduction</strong></a> ·
-  <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
-  <a href="#implementation"><strong>Implementation</strong></a> ·
-  <a href="#contributions"><strong>Contributions</strong></a>
-</p>
-<br/>
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### Introduction
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Just a dumb free invoice generator! Enter your details and download your invoice as pdf. No sign-up required!
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Tech Stack
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- [Next.js](https://nextjs.org/) – Framework
-- [Tailwind](https://tailwindcss.com/) – CSS
-- [Vercel](https://vercel.com/) – Hosting
-- [Puppeteer](https://pptr.dev/) – PDF download
+## Learn More
 
-### Contributions
+To learn more about Next.js, take a look at the following resources:
 
-Here's how you can contribute:
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- [Open an issue](https://github.com/gokulkrishh/invoicegenerator.tax/issues) if you believe you've encountered a bug.
-- Make a [pull request](https://github.com/gokulkrishh/invoicegenerator.tax/pull) to add new features/make quality-of-life improvements/fix bugs.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### Author
+## Deploy on Vercel
 
-- Gokulakrishnan Kalaikovan ([@gokul_i](https://twitter.com/gokul_i))
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-#### MIT Licensed
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

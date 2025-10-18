@@ -1,54 +1,103 @@
-import Link from 'next/link'
+import Image from "next/image";
 
-import CurrencySelect from './components/currency-select'
-import Form from './components/form'
-import GithubStarButton from './components/github-link'
-import ThemeSwitch from './components/theme-switch'
-
-const LogoSVG = ({ className }: { className?: string }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M2.9677 1.45748C3.10835 1.31682 3.29913 1.23779 3.49805 1.23779H20.498C20.9123 1.23779 21.248 1.57358 21.248 1.98779V21.5001C21.248 21.7604 21.1131 22.002 20.8916 22.1386C20.67 22.2751 20.3935 22.2871 20.161 22.1701L16.5154 20.3361L12.3623 22.6434C12.1358 22.7693 11.8603 22.7693 11.6338 22.6434L7.48072 20.3361L3.83658 22.1701C3.6041 22.2871 3.32757 22.2752 3.10599 22.1386C2.8844 22.0021 2.74945 21.7604 2.74943 21.5002L2.74805 1.98785C2.74803 1.78892 2.82704 1.59815 2.9677 1.45748ZM7.99805 10.25H11.998V11.75H7.99805V10.25ZM14.998 6.25H7.99805V7.75H14.998V6.25Z"
-      fill="currentColor"
-    />
-  </svg>
-)
-
-export default async function Home() {
+export default function Home() {
   return (
-    <div className="m-auto w-full px-4 py-4 md:max-w-4xl md:px-6 lg:max-w-[1080px]">
-      <header className="flex flex-col justify-between md:flex-row print:hidden">
-        <Link
-          className="ring-ring ring-offset-background flex items-center gap-1.5 rounded-md outline-hidden transition-all duration-200 ease-in-out hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[1.02]"
-          href="/"
-        >
-          <LogoSVG className="text-foreground h-6 w-6" />
-          <h1 className="text-2xl font-extrabold tracking-tighter">Invoice Generator</h1>
-        </Link>
+    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
+        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
+          <li className="mb-2 tracking-[-.01em]">
+            Get started by editing{" "}
+            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
+              app/page.tsx
+            </code>
+            .
+          </li>
+          <li className="tracking-[-.01em]">
+            Save and see your changes instantly.
+          </li>
+        </ol>
 
-        <div className="flex items-center gap-4 max-md:mt-4">
-          <CurrencySelect />
-          <GithubStarButton />
-        </div>
-      </header>
-      <main className="mt-5 flex w-full flex-col items-center justify-center md:mt-10">
-        <Form />
-      </main>
-      <footer className="mt-10 flex justify-between print:hidden">
-        <div className="flex items-center gap-1">
-          <span className="mr-1.5 inline-flex">👋</span> Built by
-          <Link
-            className="ring-ring ring-offset-background flex items-center rounded-md underline outline-hidden transition-all duration-200 ease-in-out hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[1.02]"
-            href="https://github.com/gokulkrishh"
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
             target="_blank"
+            rel="noopener noreferrer"
           >
-            Gokul
-          </Link>
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
         </div>
-        <ThemeSwitch />
+      </main>
+      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
       </footer>
     </div>
-  )
+  );
 }

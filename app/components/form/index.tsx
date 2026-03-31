@@ -182,7 +182,7 @@ export default function Form() {
           <Button
             type="button"
             variant="ghost"
-            className="cursor-pointer gap-1.5 text-sm"
+            className="gap-1.5 text-sm"
             onClick={() => fileInputRef.current?.click()}
           >
             <svg
@@ -202,7 +202,7 @@ export default function Form() {
             </svg>
             Import
           </Button>
-          <Button type="button" variant="ghost" className="cursor-pointer gap-1.5 text-sm" onClick={handleExport}>
+          <Button type="button" variant="ghost" className="gap-1.5 text-sm" onClick={handleExport}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

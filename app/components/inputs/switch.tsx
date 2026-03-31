@@ -14,7 +14,7 @@ export default function Switch({ label, defaultValue, onChangeCallback }: Switch
   return (
     <div className="relative flex h-full items-center justify-between gap-2">
       {label ? (
-        <label htmlFor={label} className="text-sm font-medium">
+        <label htmlFor={label} className="cursor-pointer text-sm font-medium">
           {label}
         </label>
       ) : null}

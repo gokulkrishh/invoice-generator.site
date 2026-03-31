@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     headers.set('Content-Type', 'application/pdf')
 
     // // Return the PDF buffer as a response
-    return new NextResponse(pdfBuffer, { status: 200, headers: headers })
+    return new NextResponse(Buffer.from(pdfBuffer), { status: 200, headers: headers })
   } catch (error) {
     console.error('Error generating PDF:', error)
     return new NextResponse('Error generating PDF', { status: 500 })

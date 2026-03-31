@@ -2,12 +2,11 @@
 
 import Link from 'next/link'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
 
 import Button from '@/app/components/button'
-import ClipboardButton from '@/app/components/clipboard'
 import { useCurrency } from '@/app/components/context/currency'
 import { FormData, getInitialFormData, useFormData } from '@/app/components/context/form'
 import DateInput from '@/app/components/inputs/date'
@@ -24,34 +23,22 @@ const IGNORE_FIELDS: (keyof FormData)[] = []
 
 export default function Form() {
   const { formData, setFormData } = useFormData()
-  const [devMode, setDevMode] = useState<boolean>(false)
   const [savedToLocal, setSavedToLocal] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const [formLoading, setFormLoading] = useState<boolean>(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const { selectedCurrency } = useCurrency()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { selectedCurrency, onChangeHandler: onCurrencyChange } = useCurrency()
   const previewData = formData
 
   useEffect(() => {
     const localInvoiceData = localStorage.getItem('invoice-form-data')
-    const localDevMode = localStorage.getItem('invoice-dev-mode')
     if (localInvoiceData) {
       setFormData(JSON.parse(localInvoiceData) as FormData)
-    }
-    if (localInvoiceData && localDevMode) {
-      setDevMode(JSON.parse(localDevMode) as boolean)
     }
     setSavedToLocal(!!localInvoiceData)
     setLoading(false)
   }, [setFormData])
-
-  const onChangeDevMode = () => {
-    setDevMode(!devMode)
-    const localInvoiceData = localStorage.getItem('invoice-form-data')
-    if (localInvoiceData) {
-      localStorage.setItem('invoice-dev-mode', JSON.stringify(!devMode))
-    }
-  }
 
   const totalItemsAmount = formatCurrency(
     parseFloat(formData.items?.reduce((acc, item) => acc + (item.price || 0) * item.quantity, 0).toString()),
@@ -99,19 +86,22 @@ export default function Form() {
     }
   }
 
-  const handleSaveToLocal = (enabled: boolean, data: FormData = formData) => {
-    if (enabled) {
-      const filteredData: Partial<FormData> = { ...data }
-      const initialData = getInitialFormData()
-      IGNORE_FIELDS.forEach((field) => {
-        filteredData[field] = initialData[field] as never
-      })
-      localStorage.setItem('invoice-form-data', JSON.stringify(filteredData))
-    } else {
-      localStorage.removeItem('invoice-form-data')
-    }
-    setSavedToLocal(enabled)
-  }
+  const handleSaveToLocal = useCallback(
+    (enabled: boolean, data: FormData = formData) => {
+      if (enabled) {
+        const filteredData: Partial<FormData> = { ...data }
+        const initialData = getInitialFormData()
+        IGNORE_FIELDS.forEach((field) => {
+          filteredData[field] = initialData[field] as never
+        })
+        localStorage.setItem('invoice-form-data', JSON.stringify(filteredData))
+      } else {
+        localStorage.removeItem('invoice-form-data')
+      }
+      setSavedToLocal(enabled)
+    },
+    [formData],
+  )
 
   const onChangeHandler = <K extends keyof FormData>(key: K, value: FormData[K]) => {
     const updatedFormData = { ...formData, [key]: value }
@@ -119,6 +109,49 @@ export default function Form() {
     const isSaveToLocalEnabled = !!localStorage.getItem('invoice-form-data')
     handleSaveToLocal(isSaveToLocalEnabled, updatedFormData)
   }
+
+  const handleExport = useCallback(() => {
+    const data = JSON.stringify({ formData, currency: selectedCurrency.code }, null, 2)
+    const blob = new Blob([data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = formData.invoiceNo ? `invoice-${formData.invoiceNo}.json` : 'invoice-data.json'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    toast.success('Invoice data exported', { duration: 3000, className: 'rounded-lg' })
+  }, [formData, selectedCurrency.code])
+
+  const handleImport = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target?.result as string)
+          if (!parsed.formData || !parsed.formData.name === undefined || !parsed.formData.items) {
+            toast.error('Invalid invoice file', { duration: 4000, className: 'rounded-lg' })
+            return
+          }
+          setFormData(parsed.formData as FormData)
+          if (parsed.currency) {
+            onCurrencyChange(parsed.currency)
+          }
+          handleSaveToLocal(true, parsed.formData as FormData)
+          toast.success('Invoice data imported', { duration: 3000, className: 'rounded-lg' })
+        } catch {
+          toast.error('Invalid invoice file', { duration: 4000, className: 'rounded-lg' })
+        }
+      }
+      reader.readAsText(file)
+      event.target.value = ''
+    },
+    [setFormData, onCurrencyChange, handleSaveToLocal],
+  )
 
   return (
     <>
@@ -145,12 +178,28 @@ export default function Form() {
           ) : null}
         </p>
         <div className="mb-2 flex gap-4 max-sm:justify-between">
+          <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+          <Button type="button" variant="ghost" className="gap-1.5 text-sm" onClick={() => fileInputRef.current?.click()}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Import
+          </Button>
+          <Button type="button" variant="ghost" className="gap-1.5 text-sm" onClick={handleExport}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" x2="12" y1="3" y2="15" />
+            </svg>
+            Export
+          </Button>
           <Switch defaultValue={savedToLocal} label="Save to localStorage" onChangeCallback={handleSaveToLocal} />
-          <Switch defaultValue={devMode} label="Developer Mode" onChangeCallback={onChangeDevMode} />
         </div>
       </div>
       <div className="border-border flex w-full flex-col gap-2.5 overflow-auto rounded-lg border p-4 px-4 print:hidden">
-        <form ref={formRef} onSubmit={onSubmitHandler} className="w-[820px] lg:w-full">
+        <form ref={formRef} onSubmit={onSubmitHandler} className="w-205 lg:w-full">
           <div className="flex w-full justify-between">
             <div className="flex w-full max-w-md flex-col gap-3">
               <Text
@@ -255,7 +304,7 @@ export default function Form() {
                   }}
                   id="performance-from"
                   name="performance-from"
-                  className="w-[140px]"
+                  className="w-35"
                   label="Performance From"
                   required
                   defaultValue={formatDateForInput(formData.performanceFrom)}
@@ -266,7 +315,7 @@ export default function Form() {
                   }}
                   id="performance-to"
                   name="performance-to"
-                  className="w-[140px]"
+                  className="w-35"
                   label="Performance To"
                   required
                   defaultValue={formatDateForInput(formData.performanceTo)}
@@ -274,7 +323,7 @@ export default function Form() {
               </div>
               <div className="inline-flex w-full max-w-xs justify-between">
                 <DateInput
-                  className="w-[140px]"
+                  className="w-35"
                   onChangeCallback={(value: string) => {
                     onChangeHandler('dueDate', formatDate(value))
                   }}
@@ -285,7 +334,7 @@ export default function Form() {
                   defaultValue={formatDateForInput(formData.dueDate)}
                 />
                 <DateInput
-                  className="w-[140px]"
+                  className="w-35"
                   onChangeCallback={(value: string) => {
                     onChangeHandler('invoiceDate', formatDate(value))
                   }}
@@ -319,12 +368,12 @@ export default function Form() {
               }}
               className="h-36 max-w-md"
               label="Terms of Payment"
-              placeholder={`Account Owner Name: Gokulakrishnan Kalaikovan
+              placeholder={`Account Owner Name: Tim Cook
 Account Number: 40123123012312
-IFSC Code: SBININBBXXX
+IFSC Code: AMCNINBBXXX
 MICR Code: 400002003
 Swift Code: 123456789012
-Bank Name: State Bank of India`}
+Bank Name: Bank of America`}
               required
               defaultValue={formData.termsOfPayment}
             />
@@ -399,17 +448,6 @@ Bank Name: State Bank of India`}
         <Preview formData={previewData} totalItemsAmount={totalItemsAmount} currencyCode={selectedCurrency.code} />
       </div>
 
-      {devMode ? (
-        <div className="mt-5 flex w-full flex-col print:hidden">
-          <div className="mb-2 flex justify-between">
-            <h4 className="w-fit font-semibold">Data:</h4>
-            <div className="flex items-center gap-3">
-              <ClipboardButton data={formData} />
-            </div>
-          </div>
-          <TextArea className="white h-[620px] font-mono" defaultValue={JSON.stringify(formData, null, 2)} readOnly />
-        </div>
-      ) : null}
     </>
   )
 }

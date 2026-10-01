@@ -6,7 +6,8 @@ import { FormData } from '@/app/components/context/form'
 
 export const maxDuration = 60
 
-const REMOTE_CHROME_EXECUTABLE = `https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar`
+// Must match the installed @sparticuz/chromium-min version
+const REMOTE_CHROME_EXECUTABLE = `https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar`
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
       puppeteer = await import('puppeteer-core')
       browser = await puppeteer.launch({
         defaultViewport: { width: 1080, height: 1080 },
+        headless: 'shell',
         args: [
           ...chromium.args,
           '--disable-blink-features=AutomationControlled',

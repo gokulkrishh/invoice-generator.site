@@ -86,7 +86,9 @@ export async function POST(request: NextRequest) {
       </html>
       `
 
-    await page.setContent(await htmlWithFonts, { waitUntil: 'networkidle0' })
+    await page.setContent(htmlWithFonts, { waitUntil: 'load' })
+    // Wait for Tailwind CDN and Google Fonts to finish loading
+    await page.waitForNetworkIdle()
 
     // Generate the PDF
     const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true, scale: 0.8 })
